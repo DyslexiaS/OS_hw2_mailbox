@@ -15,17 +15,19 @@
 #define ERR_EMPTY -1
 #define ERR_FULL -2
 
+union data {
+	unsigned int word_count;
+	char querty_word[32];
+};
 struct mailbox_head_t {
-	/*
-	 * some structure members you define
-	 */
+	long long int count;
 	struct list_head head;
 };
 
 struct mailbox_entry_t {
-	/*
-	 * some structure members you define
-	 */
+	int who;				//slave =0, master = 1
+	char file_path[4096];	//file path
+	union data passing;
 	struct list_head entry;
 };
 

@@ -1,6 +1,6 @@
 #include "mailbox.h"
 
-MODULE_LICENSE("Dual BSD/GPL");
+MODULE_LICENSE("Dual BSD/GPL");	//create driver
 
 static void get_process_name(char *ouput_name);
 static ssize_t mailbox_read(struct kobject *kobj,
