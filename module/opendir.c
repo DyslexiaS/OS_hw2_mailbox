@@ -2,7 +2,8 @@
 #include<errno.h>
 #include<dirent.h>
 #include<string.h>
-void find_file(char* path){
+void find_file(char* path)
+{
 	errno = 0;
 	DIR* dir;
 	dir = opendir(path);
@@ -29,7 +30,8 @@ void find_file(char* path){
 		closedir(dir);
 	}
 }
-int main(int argc,char** argv){
+int main(int argc,char** argv)
+{
 	char path[4096] = "";
 	strcpy(path,argv[1]);
 	find_file(path);
