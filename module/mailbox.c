@@ -8,10 +8,10 @@ static ssize_t mailbox_read(struct kobject *kobj,
 static ssize_t mailbox_write(struct kobject *kobj,
                              struct kobj_attribute *attr, const char *buf, size_t count);
 
-static struct kobject *hw2_kobject;  
+static struct kobject *hw2_kobject;
 static struct kobj_attribute mailbox_attribute
     = __ATTR(mailbox, 0660, mailbox_read, mailbox_write);
-// atrribute : create file 
+// atrribute : create file
 static int num_entry_max = 2;
 
 module_param(num_entry_max, int, S_IRUGO);
