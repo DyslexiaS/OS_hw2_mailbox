@@ -25,7 +25,7 @@ void find_file(int sysfs_fd, struct mail_t* mail)
 		struct dirent* ptr;
 		while((ptr = readdir(dir)) != NULL) {
 			struct mail_t new;
-			strcpy(new.data.query_word,mail->data.query_word); 
+			strcpy(new.data.query_word,mail->data.query_word);
 			if(!strcmp(ptr->d_name,".")||!strcmp(ptr->d_name,".."))
 				continue;
 			else {
