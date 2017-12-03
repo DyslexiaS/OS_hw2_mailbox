@@ -2,27 +2,24 @@
 #include<errno.h>
 #include<dirent.h>
 #include<string.h>
-void find_file(char* path)
-{
+void find_file(char* path){
 	errno = 0;
 	DIR* dir;
 	dir = opendir(path);
 	if (errno == ENOENT)	{
 		printf("This direction isn't exist.\n");
-		return;	
-	}
-	else if(errno == ENOTDIR){	//file
+		return;
+	} else if(errno == ENOTDIR) {	//file
 		printf("file_path=%s\n", path);
-	}
-	else{
+	} else {
 		struct dirent* ptr;
-		while((ptr = readdir(dir)) != NULL){
+		while((ptr = readdir(dir)) != NULL) {
 			//printf("new_path=%s dname=%s\n", path,ptr->d_name);
 			char new_path[4096]="";
 //			if(ptr->d_name[0] == '.')
 			if(!strcmp(ptr->d_name,".")||!strcmp(ptr->d_name,".."))
-					continue;
-			else{
+				continue;
+			else {
 				strcpy(new_path,path);
 				strcat(new_path,"/");
 				strcat(new_path,ptr->d_name);

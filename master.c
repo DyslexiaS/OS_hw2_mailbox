@@ -41,7 +41,7 @@ void find_file(int sysfs_fd, struct mail_t* mail)
 int main(int argc, char **argv)
 {
 	struct mail_t mail;
-	int sysfs_fd = open("/sys/kernel/hw2/mailbox" ,O_RDWR);
+	int sysfs_fd = open("/sys/kernel/hw2/mailbox",O_RDWR);
 	if(sysfs_fd < 0) {
 		printf("Fail to open device.\n");
 		printf("errno=%d\n",errno);
