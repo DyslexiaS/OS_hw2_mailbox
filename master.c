@@ -1,15 +1,5 @@
 #include "master.h"
-/* mail.h
-   struct mail_t {
-   union {
-   char query_word[32];
-   unsigned int word_count;
-   } data;
-   char file_path[4096];
-   };
-   int send_to_fd(int sysfs_fd, struct mail_t *mail);
-   int receive_from_fd(int sysfs_fd, struct mail_t *mail);
-   */
+
 void find_file(int sysfs_fd, struct mail_t* mail)
 {
 	errno = 0;
@@ -79,45 +69,35 @@ int main(int argc, char **argv)
 
 int send_to_fd(int sysfs_fd, struct mail_t *mail)
 {
-	//strcat(mail->file_path,"m");
-	//(char*)mail
-	int ret_val = write(sysfs_fd,(char*)mail,sizeof(*mail));
-	printf("ret=%d\n",ret_val);
-	if (ret_val == ERR_FULL) {
-		/*
-		 * write something or nothing
-		 */
-	} else {
-		/*
-		 * write something or nothing
-		 */
-	}
-
-	/*
-	 * write something or nothing
-	 */
+		while(1){
+			int ret_val = write(sysfs_fd,(char*)mail,sizeof(*mail));
+			printf("ret=%d\n",ret_val);
+			if (ret_val == ERR_FULL) {
+				struct mail_t result ;
+				receive_from_fd(sysfs_fd, &result);
+				printf("FILE_PATH = %s\n", result.file_path);
+				printf("WORD_COUNT = %u\n", result.data.word_count);
+			} else if(ret_val == DO){
+				return 0;
+			}
+			else{
+				printf("master write Error.\n");
+				exit(-1);
+			}
+		}
 }
-
-int receive_from_fd(int sysfs_fd, struct mail_t *mail)
+int receive_from_fd(int sysfs_fd, struct mail_t *result)
 {
-	/*
-	 * write something or nothing
-	 */
-
-	int ret_val;
-	//int ret_val = read(sysfs_fd, ...);
-	if (ret_val == ERR_EMPTY) {
-		/*
-		 * END
-		 */
-	} else {
-		/*
-		 * write something or nothing
-		 */
-	}
-
-	/*
-	 * write something or nothing
-	 */
-	return 0;
+		while(1){
+			int ret_val = read(sysfs_fd, (char*)result, sizeof(*result));
+			if (ret_val == ERR_EMPTY) {
+				continue;
+			} else if(ret_val == DO){
+				return 0;	
+			}
+			else{
+				printf("master read Error.\n");
+				exit(-1);
+			}
+		}
 }

@@ -25,10 +25,10 @@ static ssize_t mailbox_read(struct kobject *kobj,
 {
 	if(!HEAD.node_num)
 		return ERR_EMPTY;
-	else
+	else{
 		return strlen(buf);	//EMPTY
+	}
 }
-
 /*
  *add_Node_tail(&HEAD.head)	return(struct mail_entry_t*)
  *remove_Node(struct mail_entry_t *)
