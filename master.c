@@ -69,35 +69,33 @@ int main(int argc, char **argv)
 
 int send_to_fd(int sysfs_fd, struct mail_t *mail)
 {
-		while(1){
-			int ret_val = write(sysfs_fd,(char*)mail,sizeof(*mail));
-			printf("ret=%d\n",ret_val);
-			if (ret_val == ERR_FULL) {
-				struct mail_t result ;
-				receive_from_fd(sysfs_fd, &result);
-				printf("FILE_PATH = %s\n", result.file_path);
-				printf("WORD_COUNT = %u\n", result.data.word_count);
-			} else if(ret_val == DO){
-				return 0;
-			}
-			else{
-				printf("master write Error.\n");
-				exit(-1);
-			}
+	while(1) {
+		int ret_val = write(sysfs_fd,(char*)mail,sizeof(*mail));
+		printf("ret=%d\n",ret_val);
+		if (ret_val == ERR_FULL) {
+			struct mail_t result ;
+			receive_from_fd(sysfs_fd, &result);
+			printf("FILE_PATH = %s\n", result.file_path);
+			printf("WORD_COUNT = %u\n", result.data.word_count);
+		} else if(ret_val == DO) {
+			return 0;
+		} else {
+			printf("master write Error.\n");
+			exit(-1);
 		}
+	}
 }
 int receive_from_fd(int sysfs_fd, struct mail_t *result)
 {
-		while(1){
-			int ret_val = read(sysfs_fd, (char*)result, sizeof(*result));
-			if (ret_val == ERR_EMPTY) {
-				continue;
-			} else if(ret_val == DO){
-				return 0;	
-			}
-			else{
-				printf("master read Error.\n");
-				exit(-1);
-			}
+	while(1) {
+		int ret_val = read(sysfs_fd, (char*)result, sizeof(*result));
+		if (ret_val == ERR_EMPTY) {
+			continue;
+		} else if(ret_val == DO) {
+			return 0;
+		} else {
+			printf("master read Error.\n");
+			exit(-1);
 		}
+	}
 }

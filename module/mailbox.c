@@ -25,7 +25,7 @@ static ssize_t mailbox_read(struct kobject *kobj,
 {
 	if(!HEAD.node_num)
 		return ERR_EMPTY;
-	else{
+	else {
 		return strlen(buf);	//EMPTY
 	}
 }
