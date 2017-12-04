@@ -40,7 +40,7 @@ static ssize_t mailbox_write(struct kobject *kobj,
 	printk("path=%s\n",pass->file_path);
 	if((num_entry_max - HEAD.node_num)<=1)
 		return ERR_FULL;	//FULL
-	else{
+	else {
 		struct mailbox_entry_t*	new_node = add_Node_tail(&HEAD.head);
 		get_process_name(new_node->who);
 		printk("who=%s\n",new_node->who);
@@ -49,8 +49,8 @@ static ssize_t mailbox_write(struct kobject *kobj,
 			strcpy(new_node->data.query_word,pass->data.query_word);
 		if(!strcmp(new_node->who,"slave"))
 			new_node->data.word_count = pass->data.word_count;
-	//	printk("count=%u\n",new_node->data.word_count);
-	
+		//	printk("count=%u\n",new_node->data.word_count);
+
 		return DO;   //DO
 	}
 }
@@ -64,7 +64,7 @@ static int __init mailbox_init(void)
 	HEAD.node_num = 0;
 	HEAD.head.prev = &HEAD.head;
 	HEAD.head.next = &HEAD.head;
-	return 0;	
+	return 0;
 }
 
 static void __exit mailbox_exit(void)

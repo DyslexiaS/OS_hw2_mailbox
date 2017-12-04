@@ -79,8 +79,9 @@ int main(int argc, char **argv)
 
 int send_to_fd(int sysfs_fd, struct mail_t *mail)
 {
-
-	int ret_val = write(sysfs_fd,mail->file_path,sizeof(mail->file_path));
+	//strcat(mail->file_path,"m");
+	//(char*)mail
+	int ret_val = write(sysfs_fd,(char*)mail,sizeof(*mail));
 	printf("ret=%d\n",ret_val);
 	if (ret_val == ERR_FULL) {
 		/*

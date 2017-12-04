@@ -4,7 +4,7 @@ int compare(char*find, char*str)
 {
 	int len = strlen(find);
 	int len2 = strlen(str);
-	len = len<=len2 ? len :len2;	
+	len = len<=len2 ? len :len2;
 	for(int i=0; i<len; ++i) {
 		find[i] |= 1<<5;
 		str[i] |= 1<<5;
