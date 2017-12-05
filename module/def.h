@@ -4,5 +4,6 @@
 #define ERR_EMPTY 0
 #define ERR_FULL 0
 #define DO 1
+#define SIZE 4095
 
 #endif

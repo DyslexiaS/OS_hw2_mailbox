@@ -26,7 +26,24 @@ static ssize_t mailbox_read(struct kobject *kobj,
 	if(!HEAD.node_num)
 		return ERR_EMPTY;
 	else {
-		return strlen(buf);	//EMPTY
+		struct mail_t* read_node = (struct mail_t*)buf;
+		struct list_head *listptr;
+		struct mailbox_entry_t *node;
+		char name[50];
+		get_process_name(name);
+		printk("%s start to read \n",name);
+		list_for_each(listptr, &HEAD.head) {
+			node = list_entry(listptr, struct mailbox_entry_t, entry);
+			if(!strcmp(name,"master") && !strcmp(node->who,"slave")) {
+				read_node->data.word_count = node->data.word_count;
+				remove_Node(node);
+				return SIZE;
+			} else if(!strcmp(name,"slave") && !strcmp(node->who, "master")) {
+				strcpy(read_node->data.query_word, node->data.query_word);
+				remove_Node(node);
+				return SIZE;
+			}
+		}
 	}
 }
 /*
@@ -49,8 +66,6 @@ static ssize_t mailbox_write(struct kobject *kobj,
 			strcpy(new_node->data.query_word,pass->data.query_word);
 		if(!strcmp(new_node->who,"slave"))
 			new_node->data.word_count = pass->data.word_count;
-		//	printk("count=%u\n",new_node->data.word_count);
-
 		return DO;   //DO
 	}
 }

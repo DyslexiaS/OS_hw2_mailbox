@@ -45,7 +45,6 @@ int main(int argc, char **argv)
 			strcpy(mail.file_path,argv[i+1]);
 		else if(!strcmp("-s",argv[i]))
 			slave_num = atoi(argv[i+1]);
-
 		else {
 			printf("Input error.");
 			return 0;
@@ -61,6 +60,9 @@ int main(int argc, char **argv)
 		}
 	}
 	//FIND FILE
+	printf("%s\n",mail.file_path);
+	if(mail.file_path[strlen(mail.file_path)-1] == '/')
+		mail.file_path[strlen(mail.file_path)-1] = '\0';
 	find_file(sysfs_fd,&mail);
 	close(sysfs_fd);
 	return 0;
@@ -70,8 +72,9 @@ int main(int argc, char **argv)
 int send_to_fd(int sysfs_fd, struct mail_t *mail)
 {
 	while(1) {
+		lseek(sysfs_fd,0,SEEK_SET);
 		int ret_val = write(sysfs_fd,(char*)mail,sizeof(*mail));
-		printf("ret=%d\n",ret_val);
+//		printf("ret=%d\n",ret_val);
 		if (ret_val == ERR_FULL) {
 			struct mail_t result ;
 			receive_from_fd(sysfs_fd, &result);
@@ -80,7 +83,7 @@ int send_to_fd(int sysfs_fd, struct mail_t *mail)
 		} else if(ret_val == DO) {
 			return 0;
 		} else {
-			printf("master write Error.\n");
+			printf("master write Error. ret=%d\n",ret_val);
 			exit(-1);
 		}
 	}
@@ -88,13 +91,14 @@ int send_to_fd(int sysfs_fd, struct mail_t *mail)
 int receive_from_fd(int sysfs_fd, struct mail_t *result)
 {
 	while(1) {
+		lseek(sysfs_fd,0,SEEK_SET);
 		int ret_val = read(sysfs_fd, (char*)result, sizeof(*result));
 		if (ret_val == ERR_EMPTY) {
 			continue;
-		} else if(ret_val == DO) {
+		} else if(ret_val == SIZE) {
 			return 0;
 		} else {
-			printf("master read Error.\n");
+			printf("master read Error. ret=%d\n",ret_val);
 			exit(-1);
 		}
 	}

@@ -15,6 +15,7 @@
 #define ERR_EMPTY 0
 #define ERR_FULL 0
 #define DO 1
+#define SIZE 4095
 
 struct mailbox_head_t {
 	long long int node_num;
@@ -42,6 +43,7 @@ struct mailbox_entry_t *add_Node_tail(struct list_head *head)
 	//struct list_head *listptr;
 	//struct mailbox_head_t *get_node = list_entry(listptr, struct mailbox_head_t, head);
 	++HEAD.node_num;
+	printk("add-->%lld\n",HEAD.node_num);
 	struct mailbox_entry_t *new_node;
 	new_node=(struct mailbox_entry_t*)kmalloc(sizeof(struct mailbox_entry_t),
 	         GFP_KERNEL);
@@ -51,6 +53,7 @@ struct mailbox_entry_t *add_Node_tail(struct list_head *head)
 void remove_Node(struct mailbox_entry_t *del_node)
 {
 	--HEAD.node_num;
+	printk("delete-->%lld\n",HEAD.node_num);
 	list_del(&del_node->entry);
 	kfree(del_node);
 }

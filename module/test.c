@@ -4,13 +4,15 @@ int compare(char*find, char*str)
 {
 	int len = strlen(find);
 	int len2 = strlen(str);
-	len = len<=len2 ? len :len2;
-	for(int i=0; i<len; ++i) {
-		find[i] |= 1<<5;
-		str[i] |= 1<<5;
+	if(len2-len == 0 ||(len2-len == 1 && str[len2-1] == '.')) {
+		for(int i=0; i<len; ++i) {
+			find[i] |= 1<<5;
+			str[i] |= 1<<5;
+		}
+		if( !strncmp(find,str,len))	return 1;
+		else	return 0;
 	}
-	if( !strcmp(find,str))	return 1;
-	else	return 0;
+	return 0;
 }
 
 int main ()

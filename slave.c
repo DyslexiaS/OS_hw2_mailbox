@@ -3,17 +3,19 @@ int compare(char*find, char*str)
 {
 	int len = strlen(find);
 	int len2 = strlen(str);
-	len = len<=len2 ? len :len2;
-	for(int i=0; i<len; ++i) {
-		find[i] |= 1<<5;
-		str[i] |= 1<<5;
+	if(len2-len == 0 ||(len2-len == 1 && str[len2-1] == '.')) {
+		for(int i=0; i<len; ++i) {
+			find[i] |= 1<<5;
+			str[i] |= 1<<5;
+		}
+		if( !strncmp(find,str,len)) return 1;
+		else    return 0;
 	}
-	if( !strcmp(find,str))	return 1;
-	else	return 0;
+	return 0;
 }
+
 int main(int argc, char **argv)
 {
-	struct mail_t mail;
 	int sysfs_fd = open("/sys/kernel/hw2/mailbox",O_RDWR);
 	if(sysfs_fd < 0) {
 		printf("Fail to open device.\n");
@@ -23,13 +25,15 @@ int main(int argc, char **argv)
 	printf("I'm slave\n");
 	char str[1000] = "";
 	while(1) {
+		struct mail_t mail;
 		receive_from_fd(sysfs_fd, &mail);
+		printf("slave open %s\n",mail.file_path);
+		mail.data.word_count = 0;
 		FILE * pf = fopen(mail.file_path, "r");
 		while(fscanf(pf, mail.file_path, str)!=EOF) {
 			mail.data.word_count += compare(mail.data.query_word,str);
 		}
-		// Work de done
-
+		// Work  done
 		send_to_fd(sysfs_fd, &mail);
 	}
 }
@@ -37,13 +41,15 @@ int main(int argc, char **argv)
 int send_to_fd(int sysfs_fd, struct mail_t *mail)
 {
 	while(1) {
+		lseek(sysfs_fd,0,SEEK_SET);
 		int ret_val = write(sysfs_fd,(char*)mail, sizeof(*mail));
 		if (ret_val == ERR_FULL) {
+//			printf("salve write FULL.\n");
 			continue;
 		} else if(ret_val==DO) {
 			return 0;
 		} else {
-			printf("Error.\n");
+			printf("salve write Error.\n");
 			exit(-1);
 		}
 	}
@@ -51,13 +57,15 @@ int send_to_fd(int sysfs_fd, struct mail_t *mail)
 int receive_from_fd(int sysfs_fd, struct mail_t *mail)
 {
 	while(1) {
+		lseek(sysfs_fd,0,SEEK_SET);
 		int ret_val = read(sysfs_fd,(char*)mail,sizeof(*mail));
 		if (ret_val == ERR_EMPTY) {
+//			printf("salve read EMPTY.\n");
 			continue;
-		} else if(ret_val == DO) {
+		} else if(ret_val == SIZE) {
 			return 0;
 		} else {
-			printf("Error.\n");
+			printf("slave read Error.\n");
 			exit(-1);
 		}
 	}
