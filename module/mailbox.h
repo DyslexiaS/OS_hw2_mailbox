@@ -12,17 +12,14 @@
 #include <linux/fs.h>
 #include <linux/spinlock_types.h>
 #include <linux/slab.h>
-#define ERR_EMPTY 0
-#define ERR_FULL 0
-#define DO 1
-#define SIZE 4095
+#include "def.h"
 
 struct mailbox_head_t {
 	long long int node_num;
 	struct list_head head;
 };
 struct mailbox_entry_t {
-	char who[100];
+	char who[20];
 	char file_path[4096];	//file path
 	union {
 		unsigned int word_count;
@@ -45,8 +42,7 @@ struct mailbox_entry_t *add_Node_tail(struct list_head *head)
 	++HEAD.node_num;
 	printk("add-->%lld\n",HEAD.node_num);
 	struct mailbox_entry_t *new_node;
-	new_node=(struct mailbox_entry_t*)kmalloc(sizeof(struct mailbox_entry_t),
-	         GFP_KERNEL);
+	new_node=(struct mailbox_entry_t*)kmalloc(sizeof(struct mailbox_entry_t), GFP_KERNEL);
 	list_add_tail( &new_node->entry,head);
 	return new_node;
 }

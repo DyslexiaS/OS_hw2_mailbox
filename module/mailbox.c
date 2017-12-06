@@ -31,19 +31,24 @@ static ssize_t mailbox_read(struct kobject *kobj,
 		struct mailbox_entry_t *node;
 		char name[50];
 		get_process_name(name);
-		printk("%s start to read \n",name);
+//		printk("%s start to read \n",name);
 		list_for_each(listptr, &HEAD.head) {
 			node = list_entry(listptr, struct mailbox_entry_t, entry);
 			if(!strcmp(name,"master") && !strcmp(node->who,"slave")) {
+			printk("(R) name = %s | path = %s | word = %s | count = %u \n", node->who, node->file_path,node->data.query_word,node->data.word_count);
+				strcpy(read_node->file_path,node->file_path);
 				read_node->data.word_count = node->data.word_count;
 				remove_Node(node);
 				return SIZE;
 			} else if(!strcmp(name,"slave") && !strcmp(node->who, "master")) {
+			printk("(R) name = %s | path = %s | word = %s | count = %u \n", node->who, node->file_path,node->data.query_word,node->data.word_count);
+				strcpy(read_node->file_path,node->file_path);
 				strcpy(read_node->data.query_word, node->data.query_word);
 				remove_Node(node);
 				return SIZE;
 			}
 		}
+		return ERR_EMPTY;
 	}
 }
 /*
@@ -54,18 +59,20 @@ static ssize_t mailbox_write(struct kobject *kobj,
                              struct kobj_attribute *attr, const char *buf, size_t count)
 {
 	struct mail_t* pass = (struct mail_t*)buf;
-	printk("path=%s\n",pass->file_path);
-	if((num_entry_max - HEAD.node_num)<=1)
+	//printk("path=%s\n",pass->file_path);
+	char wname[50];
+	get_process_name(wname);
+	if(!strcmp(wname,"master")&&(num_entry_max - HEAD.node_num)<=1)
 		return ERR_FULL;	//FULL
 	else {
 		struct mailbox_entry_t*	new_node = add_Node_tail(&HEAD.head);
 		get_process_name(new_node->who);
-		printk("who=%s\n",new_node->who);
 		strcpy(new_node->file_path,pass->file_path);
 		if(!strcmp(new_node->who,"master"))
 			strcpy(new_node->data.query_word,pass->data.query_word);
 		if(!strcmp(new_node->who,"slave"))
 			new_node->data.word_count = pass->data.word_count;
+		printk("(W) name = %s | path = %s | word = %s | count = %u \n", new_node->who, new_node->file_path, new_node->data.query_word,new_node->data.word_count);
 		return DO;   //DO
 	}
 }
