@@ -1,5 +1,5 @@
 #include "master.h"
-int COUNT;
+long long int COUNT, WORD_COUNT;
 void find_file(int sysfs_fd, struct mail_t* mail)
 {
 	errno = 0;
@@ -7,7 +7,7 @@ void find_file(int sysfs_fd, struct mail_t* mail)
 	dir = opendir(mail->file_path);
 	if (errno == ENOENT)	{
 		printf("This direction isn't exist.\n");
-		return;
+		exit(-1);
 	} else if(errno == ENOTDIR) {	//file
 //		printf("file_path=%s\n", mail->file_path);
 		++COUNT;
@@ -38,8 +38,12 @@ int main(int argc, char **argv)
 		printf("errno=%d\n",errno);
 		return 0;
 	}
-	int slave_num = 0;
-	for(int i=1; i<6; i+=2) {
+	int slave_num = 1;
+	if(!(argc==5||argc==7)) {
+			printf("Input error.\n");
+			return 0;	
+	}
+	for(int i=1; i<argc; i+=2) {
 		if(!strcmp("-q",argv[i]))
 			strcpy(mail.data.query_word,argv[i+1]);
 		else if(!strcmp("-d",argv[i]))
@@ -47,7 +51,7 @@ int main(int argc, char **argv)
 		else if(!strcmp("-s",argv[i]))
 			slave_num = atoi(argv[i+1]);
 		else {
-			printf("Input error.");
+			printf("Input error.\n");
 			return 0;
 		}
 	}
@@ -65,17 +69,16 @@ int main(int argc, char **argv)
 	if(mail.file_path[strlen(mail.file_path)-1] == '/')
 		mail.file_path[strlen(mail.file_path)-1] = '\0';
 	find_file(sysfs_fd,&mail);
-
 	while(1) {
 		struct mail_t result ;
 		receive_from_fd(sysfs_fd, &result);
 		if(!COUNT) {
+			printf("***********************************************\nThe total number of query word “%s” is %lld\n.",mail.data.query_word, WORD_COUNT );
 			close(sysfs_fd);
 			kill(0,2);
 		}
 	}
 	return 0;
-
 }
 
 int send_to_fd(int sysfs_fd, struct mail_t *mail)
@@ -107,6 +110,7 @@ int receive_from_fd(int sysfs_fd, struct mail_t *result)
 			--COUNT;
 			printf("FILE_PATH = %s\n", result->file_path);
 			printf("WORD_COUNT = %u\n", result->data.word_count);
+			WORD_COUNT += result->data.word_count;
 			return 0;
 		} else {
 			printf("master read Error. ret=%d\n",ret_val);
