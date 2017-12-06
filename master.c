@@ -40,8 +40,8 @@ int main(int argc, char **argv)
 	}
 	int slave_num = 1;
 	if(!(argc==5||argc==7)) {
-			printf("Input error.\n");
-			return 0;	
+		printf("Input error.\n");
+		return 0;
 	}
 	for(int i=1; i<argc; i+=2) {
 		if(!strcmp("-q",argv[i]))
@@ -73,7 +73,8 @@ int main(int argc, char **argv)
 		struct mail_t result ;
 		receive_from_fd(sysfs_fd, &result);
 		if(!COUNT) {
-			printf("***********************************************\nThe total number of query word “%s” is %lld\n.",mail.data.query_word, WORD_COUNT );
+			printf("***********************************************\nThe total number of query word “%s” is %lld\n.",
+			       mail.data.query_word, WORD_COUNT );
 			close(sysfs_fd);
 			kill(0,2);
 		}
