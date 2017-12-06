@@ -69,11 +69,10 @@ static ssize_t mailbox_write(struct kobject *kobj,
 	char wname[50];
 	get_process_name(wname);
 	spin_lock(&lucky);
-	if(!strcmp(wname,"master")&&(num_entry_max - HEAD.node_num)<=1){
+	if(!strcmp(wname,"master")&&(num_entry_max - HEAD.node_num)<=1) {
 		spin_unlock(&lucky);
 		return ERR_FULL;	//FULL
-	}
-	else {
+	} else {
 		struct mailbox_entry_t*	new_node = add_Node_tail(&HEAD.head);
 		get_process_name(new_node->who);
 		strcpy(new_node->file_path,pass->file_path);
