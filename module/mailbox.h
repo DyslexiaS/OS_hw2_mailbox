@@ -42,7 +42,8 @@ struct mailbox_entry_t *add_Node_tail(struct list_head *head)
 	++HEAD.node_num;
 	printk("add-->%lld\n",HEAD.node_num);
 	struct mailbox_entry_t *new_node;
-	new_node=(struct mailbox_entry_t*)kmalloc(sizeof(struct mailbox_entry_t), GFP_KERNEL);
+	new_node=(struct mailbox_entry_t*)kmalloc(sizeof(struct mailbox_entry_t),
+	         GFP_KERNEL);
 	list_add_tail( &new_node->entry,head);
 	return new_node;
 }

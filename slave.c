@@ -28,10 +28,10 @@ int main(int argc, char **argv)
 		struct mail_t mail;
 		receive_from_fd(sysfs_fd, &mail);
 		strcpy(find, mail.data.query_word);
-	//	printf("slave open: path = %s| find word = %s \n",mail.file_path,mail.data.query_word);
+		//	printf("slave open: path = %s| find word = %s \n",mail.file_path,mail.data.query_word);
 		mail.data.word_count = 0;
 		FILE * pf = fopen(mail.file_path, "r");
-		while(fscanf(pf, "%s" , str)!=EOF) {
+		while(fscanf(pf, "%s", str)!=EOF) {
 			mail.data.word_count += compare(find,str);
 		}
 		fclose(pf);
@@ -49,7 +49,7 @@ int send_to_fd(int sysfs_fd, struct mail_t *mail)
 //			printf("salve write FULL.\n");
 			continue;
 		} else if(ret_val==DO) {
-	//		printf("salve write successfully.\n");
+			//		printf("salve write successfully.\n");
 			return 0;
 		} else {
 			printf("salve write Error.\n");
@@ -66,7 +66,7 @@ int receive_from_fd(int sysfs_fd, struct mail_t *mail)
 //			printf("salve read EMPTY.\n");
 			continue;
 		} else if(ret_val == SIZE) {
-	//		printf("salve read successfully.\n");
+			//		printf("salve read successfully.\n");
 			return 0;
 		} else {
 			printf("slave read Error.\n");

@@ -35,13 +35,15 @@ static ssize_t mailbox_read(struct kobject *kobj,
 		list_for_each(listptr, &HEAD.head) {
 			node = list_entry(listptr, struct mailbox_entry_t, entry);
 			if(!strcmp(name,"master") && !strcmp(node->who,"slave")) {
-			printk("(R) name = %s | path = %s | word = %s | count = %u \n", node->who, node->file_path,node->data.query_word,node->data.word_count);
+				printk("(R) name = %s | path = %s | word = %s | count = %u \n", node->who,
+				       node->file_path,node->data.query_word,node->data.word_count);
 				strcpy(read_node->file_path,node->file_path);
 				read_node->data.word_count = node->data.word_count;
 				remove_Node(node);
 				return SIZE;
 			} else if(!strcmp(name,"slave") && !strcmp(node->who, "master")) {
-			printk("(R) name = %s | path = %s | word = %s | count = %u \n", node->who, node->file_path,node->data.query_word,node->data.word_count);
+				printk("(R) name = %s | path = %s | word = %s | count = %u \n", node->who,
+				       node->file_path,node->data.query_word,node->data.word_count);
 				strcpy(read_node->file_path,node->file_path);
 				strcpy(read_node->data.query_word, node->data.query_word);
 				remove_Node(node);
@@ -72,7 +74,8 @@ static ssize_t mailbox_write(struct kobject *kobj,
 			strcpy(new_node->data.query_word,pass->data.query_word);
 		if(!strcmp(new_node->who,"slave"))
 			new_node->data.word_count = pass->data.word_count;
-		printk("(W) name = %s | path = %s | word = %s | count = %u \n", new_node->who, new_node->file_path, new_node->data.query_word,new_node->data.word_count);
+		printk("(W) name = %s | path = %s | word = %s | count = %u \n", new_node->who,
+		       new_node->file_path, new_node->data.query_word,new_node->data.word_count);
 		return DO;   //DO
 	}
 }
