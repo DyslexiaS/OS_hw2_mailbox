@@ -4,6 +4,6 @@
 #define ERR_EMPTY 444
 #define ERR_FULL 444
 #define DO 1
-#define SIZE 3500
+#define SIZEQQ 3500
 
 #endif

@@ -32,6 +32,7 @@ static ssize_t mailbox_read(struct kobject *kobj,
 		char name[50];
 		get_process_name(name);
 //		printk("%s start to read \n",name);
+		spin_lock(&lucky);
 		list_for_each(listptr, &HEAD.head) {
 			node = list_entry(listptr, struct mailbox_entry_t, entry);
 			if(!strcmp(name,"master") && !strcmp(node->who,"slave")) {
@@ -40,16 +41,19 @@ static ssize_t mailbox_read(struct kobject *kobj,
 				strcpy(read_node->file_path,node->file_path);
 				read_node->data.word_count = node->data.word_count;
 				remove_Node(node);
-				return SIZE;
+				spin_unlock(&lucky);
+				return SIZEQQ;
 			} else if(!strcmp(name,"slave") && !strcmp(node->who, "master")) {
 				printk("(R) name = %s | path = %s | word = %s | count = %u \n", node->who,
 				       node->file_path,node->data.query_word,node->data.word_count);
 				strcpy(read_node->file_path,node->file_path);
 				strcpy(read_node->data.query_word, node->data.query_word);
 				remove_Node(node);
-				return SIZE;
+				spin_unlock(&lucky);
+				return SIZEQQ;
 			}
 		}
+		spin_unlock(&lucky);
 		return ERR_EMPTY;
 	}
 }
@@ -64,8 +68,11 @@ static ssize_t mailbox_write(struct kobject *kobj,
 	//printk("path=%s\n",pass->file_path);
 	char wname[50];
 	get_process_name(wname);
-	if(!strcmp(wname,"master")&&(num_entry_max - HEAD.node_num)<=1)
+	spin_lock(&lucky);
+	if(!strcmp(wname,"master")&&(num_entry_max - HEAD.node_num)<=1){
+		spin_unlock(&lucky);
 		return ERR_FULL;	//FULL
+	}
 	else {
 		struct mailbox_entry_t*	new_node = add_Node_tail(&HEAD.head);
 		get_process_name(new_node->who);
@@ -76,6 +83,7 @@ static ssize_t mailbox_write(struct kobject *kobj,
 			new_node->data.word_count = pass->data.word_count;
 		printk("(W) name = %s | path = %s | word = %s | count = %u \n", new_node->who,
 		       new_node->file_path, new_node->data.query_word,new_node->data.word_count);
+		spin_unlock(&lucky);
 		return DO;   //DO
 	}
 }
@@ -85,6 +93,7 @@ static int __init mailbox_init(void)
 	printk("Insert\n");
 	hw2_kobject = kobject_create_and_add("hw2", kernel_kobj);
 	sysfs_create_file(hw2_kobject, &mailbox_attribute.attr);
+	spin_lock_init(&lucky);
 	//init HEAD list
 	HEAD.node_num = 0;
 	HEAD.head.prev = &HEAD.head;

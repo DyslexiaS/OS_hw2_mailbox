@@ -35,6 +35,7 @@ struct mail_t {
 	char file_path[4096];
 };
 struct mailbox_head_t HEAD;
+spinlock_t lucky;
 struct mailbox_entry_t *add_Node_tail(struct list_head *head)
 {
 	//struct list_head *listptr;
