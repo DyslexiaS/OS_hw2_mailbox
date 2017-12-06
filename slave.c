@@ -65,11 +65,12 @@ int receive_from_fd(int sysfs_fd, struct mail_t *mail)
 		if (ret_val == ERR_EMPTY) {
 //			printf("salve read EMPTY.\n");
 			continue;
-		} else if(ret_val == SIZE) {
+		} else if(ret_val == SIZEQQ) {
 			//		printf("salve read successfully.\n");
 			return 0;
 		} else {
-			printf("slave read Error.\n");
+			printf("size%d\n",SIZEQQ);
+			printf("slave read Error.%d\n",ret_val);
 			exit(-1);
 		}
 	}

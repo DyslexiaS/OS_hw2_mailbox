@@ -70,8 +70,8 @@ int main(int argc, char **argv)
 		struct mail_t result ;
 		receive_from_fd(sysfs_fd, &result);
 		if(!COUNT) {
-			kill(0,2);
 			close(sysfs_fd);
+			kill(0,2);
 		}
 	}
 	return 0;
@@ -103,7 +103,7 @@ int receive_from_fd(int sysfs_fd, struct mail_t *result)
 		int ret_val = read(sysfs_fd, (char*)result, sizeof(*result));
 		if (ret_val == ERR_EMPTY) {
 			continue;
-		} else if(ret_val == SIZE) {
+		} else if(ret_val == SIZEQQ) {
 			--COUNT;
 			printf("FILE_PATH = %s\n", result->file_path);
 			printf("WORD_COUNT = %u\n", result->data.word_count);
